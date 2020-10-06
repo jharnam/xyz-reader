@@ -21,6 +21,7 @@ import android.os.Bundle;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ShareCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.palette.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -30,12 +31,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -63,6 +67,11 @@ public class ArticleDetailFragment extends Fragment implements
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+
+    private AppBarLayout mAppBar;
+    private NestedScrollView mScrollView;
+    private ProgressBar mProgressBar;
+    private FloatingActionButton mShareFab;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -165,6 +174,10 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
+        mAppBar = (AppBarLayout) mRootView.findViewById(R.id.app_bar_layout);
+        mScrollView = (NestedScrollView) mRootView.findViewById(R.id.scrollview);
+        mProgressBar = (ProgressBar) mRootView.findViewById(R.id.pb_loading_indicator);
+        mShareFab = (FloatingActionButton) mRootView.findViewById(R.id.share_floatingActionButton);
 
         bindViews();
         updateStatusBar();
@@ -225,10 +238,12 @@ public class ArticleDetailFragment extends Fragment implements
         bodyView.setTypeface(rosarioRegular);
 
         if (mCursor != null) {
+            Log.e("JKM", "1");
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            //TODO - set toolbar title
             Date publishedDate = parsePublishedDate();
             if (!publishedDate.before(START_OF_EPOCH.getTime())) {
                 bylineView.setText(Html.fromHtml(
@@ -270,8 +285,19 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
                     });
+            mAppBar.setVisibility(View.VISIBLE);
+            mScrollView.setVisibility(View.VISIBLE);
+            mShareFab.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+
         } else {
-            mRootView.setVisibility(View.GONE);
+            Log.e("JKM", "2");
+
+            //mRootView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            mAppBar.setVisibility(View.GONE);
+            mScrollView.setVisibility(View.GONE);
+            mShareFab.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A" );
             bodyView.setText("N/A");
