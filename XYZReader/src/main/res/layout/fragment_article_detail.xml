@@ -34,7 +34,8 @@
             android:scaleType="centerCrop"
             app:layout_collapseMode="parallax"
             android:minHeight="100dp"
-            android:id="@+id/photo"/>
+            android:id="@+id/photo"
+            android:transitionName="@string/transition_photo"/>
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
